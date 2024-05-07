@@ -4,10 +4,10 @@ namespace Easypark_Backend.Data.Repository
 {
     public class UserRepo
     {
-        public void savetoDB(UserModels user)
+        public void ChangePassword(UserModels user)
         {
 
-
         }
+       
     }
 }

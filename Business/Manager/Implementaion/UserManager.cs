@@ -5,22 +5,10 @@ namespace Easypark_Backend.Business.Manager.Implementaion
 {
     public class UserManager
     {
-        public bool IsUser() //example not real methoed;
-        {
-            var userloger = new UserLoggerRepo();
-            if (userloger.SignInUser())
-            {
-                return true;
-            }
-            else
-                Console.WriteLine("there is erorr");
-            return false;
-        }
-        public UserDto getusername()
-        {
-            UserDto user = new UserDto();   
-            user.name = "methed ";
-            return user;
+       public bool ReserveParking(UserDto user,GarageDto garage) {
+            return true;
+            //here mapping to model and call the methoed
+        
         }
     }
 }
