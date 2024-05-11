@@ -1,19 +1,25 @@
-﻿namespace Easypark_Backend.Data.Repository
-{
-    public class GarageReop
-    {
-        public void IncreaseNumberOfCars()
-        {
+﻿using Easypark_Backend.Business.Dtos;
+using Easypark_Backend.Data.MongoDB;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
-            //logic
-        }
-        public void setFull()
+namespace Easypark_Backend.Data.Repository
+{
+    public class GarageRepo
+    {
+        private IMongoCollection<BsonDocument> _collection;
+
+        public GarageRepo()
         {
-            //logic
+            var mongo = MongoDBConnection.Connection();
+            IMongoDatabase database = mongo.GetDatabase("EasyParkDB");
+            _collection = database.GetCollection<BsonDocument>("test");
         }
-        public bool ShowState()
+
+        public List<BsonDocument> GetAllGarages()
         {
-            return true;
+            var documents = _collection.Find(new BsonDocument()).ToList();
+            return documents;
         }
     }
 }
