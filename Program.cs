@@ -18,7 +18,9 @@ builder.Services.Configure<EasyParkDBSetting>(configuration.GetSection("EasyPark
 builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
 builder.Services.AddControllers();
-
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "EasyPark", Version = "v1" });
+});
 // Configure CORS to allow requests from http://localhost:3000
 builder.Services.AddCors(options =>
 {
@@ -31,6 +33,10 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI(c => {
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "easypark");
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
