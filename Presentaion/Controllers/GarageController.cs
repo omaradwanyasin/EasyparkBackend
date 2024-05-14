@@ -19,5 +19,5 @@ public class GarageController : ControllerBase
     {
         var garages = await _services.getAsyncAllGarages();
         return Ok(garages);
-    }
+    } // test
 }
