@@ -3,10 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Easypark_Backend.Data.MongoDB;
-using Easypark_Backend.Services;
-using Easypark_Backend.Services.Hubs;
 using Easypark_Backend.Data.Repository;
 using signalrtest.Hubs;
+using Easypark_Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +15,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.Configure<EasyParkDBSetting>(configuration.GetSection("EasyParkDBSetting"));
+builder.Services.AddSingleton<GarageRepo>();
 builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
 builder.Services.AddControllers();
@@ -35,9 +35,10 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
 app.UseSwagger();
 app.UseSwaggerUI(c => {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "easypark");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "EasyPark v1");
 });
 
 // Configure the HTTP request pipeline.
@@ -53,4 +54,3 @@ app.UseCors("CorsPolicy");
 app.MapHub<GarageHubs>("/garageHubs");
 
 app.Run();
-
