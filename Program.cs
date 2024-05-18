@@ -6,6 +6,7 @@ using Easypark_Backend.Data.MongoDB;
 using Easypark_Backend.Services;
 using Easypark_Backend.Services.Hubs;
 using Easypark_Backend.Data.Repository;
+using signalrtest.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +22,15 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "EasyPark", Version = "v1" });
 });
-// Configure CORS to allow requests from http://localhost:3000
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("CorsPolicy", builder =>
     {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        builder.AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials()
+               .SetIsOriginAllowed(origin => true); // Allow any origin
     });
 });
 
@@ -45,27 +47,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-
-// Apply CORS policy to allow requests from http://localhost:3000
-app.UseCors("AllowReactApp");
-
 app.UseAuthorization();
-
 app.MapControllers();
-app.MapHub<ResearvationHub>("/Researve");
+app.UseCors("CorsPolicy");
+app.MapHub<GarageHubs>("/garageHubs");
 
 app.Run();
 
-
-
-
-
-
-//var mongo = MongoDBConnection.Connection();
-//IMongoDatabase database = mongo.GetDatabase("EasyParkDB");
-//var collection = database.GetCollection<BsonDocument>("test");
-//BsonDocument postDocument = new BsonDocument
-//            {
-//                { "content", "samer smara" },
-//            };
-//collection.InsertOne(postDocument);
