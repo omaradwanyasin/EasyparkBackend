@@ -8,11 +8,13 @@ namespace Easypark_Backend.Data.Repository
     public class UserLoggerRepo
     {
         private readonly IMongoCollection<UserModels> _UserCollection;
+        private readonly IMongoCollection<GarageOwnerModels> _garageCollection;
         public UserLoggerRepo(IOptions<EasyParkDBSetting> setting)
         {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
             _UserCollection = mongoDb.GetCollection<UserModels>("User");
+            _garageCollection = mongoDb.GetCollection<GarageOwnerModels>("GarageOwner");
         }
         public async Task<UserModels> SignIn(string email, string password)
         {
@@ -28,6 +30,21 @@ namespace Easypark_Backend.Data.Repository
             try
             {
                 await _UserCollection.InsertOneAsync(newUser);
+                return newUser;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred during user registration: {ex}");
+                throw;
+            }
+        }
+        ///here the sign up for the garage owner;
+        
+        public async Task<GarageOwnerModels> GarageOwnerSignUp(GarageOwnerModels newUser)
+        {
+            try
+            {
+                await _garageCollection.InsertOneAsync(newUser);
                 return newUser;
             }
             catch (Exception ex)
