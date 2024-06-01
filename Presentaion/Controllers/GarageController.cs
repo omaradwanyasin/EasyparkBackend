@@ -1,4 +1,5 @@
-﻿using Easypark_Backend.Data.Repository;
+﻿using Easypark_Backend.Data.DataModels;
+using Easypark_Backend.Data.Repository;
 using Easypark_Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -8,9 +9,11 @@ using System.Collections.Generic;
 public class GarageController : ControllerBase
 {
     private readonly GarageServices _services;
-    public GarageController(GarageServices services)
+    private readonly GarageRepo _garageRepo;
+    public GarageController(GarageServices services, GarageRepo garageRepo)
     {
         _services = services;
+        _garageRepo = garageRepo;
     }
    
     [HttpGet]
@@ -19,5 +22,24 @@ public class GarageController : ControllerBase
     {
         var garages = await _services.getAsyncAllGarages();
         return Ok(garages);
+    }
+    [HttpPost]
+    [Route("/parkings")]
+    public async Task<IActionResult> InsertGarageAsync([FromBody]GarageModel garage)
+    {
+        try
+        {
+            if (garage == null)
+            {
+                return BadRequest("Garage model cannot be null.");
+            }
+
+            await _garageRepo.InsertGarageAsync(garage);
+            return Ok(garage.GarageId);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 }

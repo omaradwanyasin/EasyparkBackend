@@ -15,7 +15,7 @@ namespace Easypark_Backend.Data.Repository
         {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
-            _collection = mongoDb.GetCollection<GarageModel>("Garages");
+            _collection = mongoDb.GetCollection<GarageModel>("Garage");
         }
 
         public async Task UpdateGarageStatusAsync(string garageId, int status)
@@ -28,6 +28,16 @@ namespace Easypark_Backend.Data.Repository
             {
                 throw new Exception($"Garage with ID {garageId} not found.");
             }
+        }
+
+        public async Task InsertGarageAsync(GarageModel garage)
+        {
+            if (garage == null)
+            {
+                throw new ArgumentNullException(nameof(garage), "Garage model cannot be null.");
+            }
+
+            await _collection.InsertOneAsync(garage);
         }
     }
 }
