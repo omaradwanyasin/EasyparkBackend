@@ -15,7 +15,7 @@ namespace Easypark_Backend.Data.Repository
         {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
-            _collection = mongoDb.GetCollection<GarageModel>("Garage");
+            _collection = mongoDb.GetCollection<GarageModel>("Garages");
         }
 
         public async Task UpdateGarageStatusAsync(string garageId, int status)
