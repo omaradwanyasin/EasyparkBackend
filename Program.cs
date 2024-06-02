@@ -19,6 +19,7 @@ builder.Services.AddSingleton<GarageRepo>();
 builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
 builder.Services.AddSingleton<NotificationsRepo>();
+builder.Services.AddSingleton<NotificationHub>();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "EasyPark", Version = "v1" });
@@ -34,6 +35,7 @@ builder.Services.AddCors(options =>
                .SetIsOriginAllowed(origin => true); // Allow any origin
     });
 });
+
 
 var app = builder.Build();
 
@@ -53,5 +55,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseCors("CorsPolicy");
 app.MapHub<GarageHubs>("/garageHubs");
+app.MapHub<NotificationHub>("/notificationHub");
+
 
 app.Run();

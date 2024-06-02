@@ -1,75 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Easypark_Backend.Data.Repository;
-using Microsoft.Extensions.Logging;
+﻿using Easypark_Backend.Presentaion.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
 
-namespace Easypark_Backend.Controllers
+namespace YourNamespace.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class NotificationsController : ControllerBase
+    [Route("api/[controller]")]
+    public class NotificationController : ControllerBase
     {
-        private readonly NotificationsRepo _notificationsRepo;
-        private readonly ILogger<NotificationsController> _logger;
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
 
-        public NotificationsController(NotificationsRepo notificationsRepo, ILogger<NotificationsController> logger)
+        public NotificationController(IHubContext<NotificationHub> notificationHubContext)
         {
-            _notificationsRepo = notificationsRepo;
-            _logger = logger;
+            _notificationHubContext = notificationHubContext;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateNotification([FromBody] Notification notification)
+        [HttpPost("send")]
+        public async Task<IActionResult> SendNotification([FromBody] NotificationDto notificationDto)
         {
-            if (notification == null)
-            {
-                _logger.LogError("Notification object is null");
-                return BadRequest(new { message = "Notification object is null" });
-            }
-
-            _logger.LogInformation("Received notification: {Notification}", notification);
-
-            if (string.IsNullOrEmpty(notification.UserId))
-            {
-                _logger.LogError("UserId is required");
-                return BadRequest(new { message = "UserId is required" });
-            }
-
-            if (string.IsNullOrEmpty(notification.ReservationId))
-            {
-                _logger.LogError("ReservationId is required");
-                return BadRequest(new { message = "ReservationId is required" });
-            }
-
-            if (string.IsNullOrEmpty(notification.Message))
-            {
-                _logger.LogError("Message is required");
-                return BadRequest(new { message = "Message is required" });
-            }
-
-            if (notification.CreatedAt == default(DateTime))
-            {
-                _logger.LogError("CreatedAt is required");
-                return BadRequest(new { message = "CreatedAt is required" });
-            }
-
-            try
-            {
-                await _notificationsRepo.CreateAsync(notification);
-                _logger.LogInformation("Notification created successfully: {Notification}", notification);
-                return Ok(notification);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("An error occurred while creating the notification: {Error}", ex.Message);
-                return StatusCode(500, new { message = "An error occurred while creating the notification", details = ex.Message });
-            }
+            // Use notificationDto.userId, notificationDto.reservationId, etc.
+            await _notificationHubContext.Clients.All.SendAsync("ReceiveNotification", notificationDto.Message);
+            return Ok(new { Message = "Notification sent successfully." });
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserNotifications(string userId)
-        {
-            var notifications = await _notificationsRepo.GetUserNotificationsAsync(userId);
-            return Ok(notifications);
-        }
     }
 }
