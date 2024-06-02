@@ -1,10 +1,24 @@
-﻿namespace Easypark_Backend.Data.DataModels
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+public class Notification
 {
-    public class Notification
-    {
-        public int NotificationID { get; set; }
-        public string Content { get; set; }
-        public DateTime DateTime { get; set; }
-        public int userID { get; set; }
-    }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
+
+    [BsonElement("userId")]
+    public string UserId { get; set; }
+
+    [BsonElement("reservationId")]
+    public string ReservationId { get; set; }
+
+    [BsonElement("message")]
+    public string Message { get; set; }
+
+    [BsonElement("status")]
+    public string Status { get; set; } = "unread";
+
+    [BsonElement("createdAt")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

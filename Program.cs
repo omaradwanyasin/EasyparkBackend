@@ -18,6 +18,7 @@ builder.Services.Configure<EasyParkDBSetting>(configuration.GetSection("EasyPark
 builder.Services.AddSingleton<GarageRepo>();
 builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
+builder.Services.AddSingleton<NotificationsRepo>();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "EasyPark", Version = "v1" });
