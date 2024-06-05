@@ -1,6 +1,10 @@
 ﻿using Easypark_Backend.Data.DataModels;
 using Easypark_Backend.Data.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using static Easypark_Backend.Presentaion.Controllers.UserController;
 
@@ -10,10 +14,12 @@ namespace Easypark_Backend.Presentation.Controllers
     public class GarageOwnerController : ControllerBase
     {
         private readonly UserLoggerRepo _services;
+        private readonly JwtOptions _jwtOptions;
 
-        public GarageOwnerController(UserLoggerRepo services)
+        public GarageOwnerController(UserLoggerRepo services, JwtOptions jwtOptions)
         {
             _services = services;
+            _jwtOptions = jwtOptions;
         }
         [HttpPost]
         [Route("/GarageOwnerSignin")]
@@ -27,8 +33,29 @@ namespace Easypark_Backend.Presentation.Controllers
             {
                 return NotFound("Invalid email or password");
             }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtOptions.SigningKey);
 
-            return Ok(user);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = _jwtOptions.Issuer,
+                Audience = _jwtOptions.Audience,
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Email),
+                    new Claim(ClaimTypes.Name, user.Name ?? string.Empty),
+                    new Claim("UserId", user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return Ok(new { Token = tokenString });
+
+            
         }
 
         [HttpPost]
