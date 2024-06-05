@@ -6,6 +6,10 @@ using Easypark_Backend.Data.MongoDB;
 using Easypark_Backend.Data.Repository;
 using signalrtest.Hubs;
 using Easypark_Backend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Easypark_Backend;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,7 @@ builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
 builder.Services.AddSingleton<NotificationsRepo>();
 builder.Services.AddSingleton<NotificationHub>();
+//builder.Services.AddSingleton(JwtOptions);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "EasyPark", Version = "v1" });
@@ -35,8 +40,22 @@ builder.Services.AddCors(options =>
                .SetIsOriginAllowed(origin => true); // Allow any origin
     });
 });
-
-
+var jwtoptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
+builder.Services.AddSingleton(jwtoptions);
+builder.Services.AddAuthentication()
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.SaveToken = true; //
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtoptions.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtoptions.Audience,
+            ValidateSignatureLast = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtoptions.SigningKey))
+        };
+    });
 var app = builder.Build();
 
 app.UseSwagger();

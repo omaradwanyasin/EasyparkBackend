@@ -38,8 +38,17 @@ namespace Easypark_Backend.Data.Repository
                 throw;
             }
         }
+
+        public async Task<GarageOwnerModels> SignInGarageOwner(string email, string password)
+        {
+            var filter = Builders<GarageOwnerModels>.Filter.Eq(u => u.Email, email) &
+                         Builders<GarageOwnerModels>.Filter.Eq(u => u.Password, password);
+            var user = await _garageCollection.Find(filter).FirstOrDefaultAsync();
+
+            return user;
+        }
         ///here the sign up for the garage owner;
-        
+
         public async Task<GarageOwnerModels> GarageOwnerSignUp(GarageOwnerModels newUser)
         {
             try

@@ -11,31 +11,31 @@ namespace Easypark_Backend.Data.DataModels
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonElement("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [BsonElement("geometry")]
-        public List<double> Geometry { get; set; }
+        public List<double>? Geometry { get; set; }
 
         [BsonElement("properties")]
-        public PropertyModel Properties { get; set; }
+        public PropertyModel? Properties { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; }
 
         [BsonElement("comments")]
-        public List<string> Comments { get; set; }
+        public List<string>? Comments { get; set; }
 
         [BsonElement("City")]
         public string City { get; set; }
 
         [BsonElement("status")]
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         [BsonElement("info")]
-        public string Info { get; set; }
+        public string? Info { get; set; }
 
         [BsonElement("rating")]
-        public int Rating { get; set; }
+        public int? Rating { get; set; }
 
         [BsonElement("capacity")]
         public int Capacity { get; set; }
@@ -50,7 +50,7 @@ namespace Easypark_Backend.Data.DataModels
         public bool SupportsHeavyTrucks { get; set; }
 
         [BsonElement("garageid")]
-        public string GarageId { get; set; }
+        public string? GarageId { get; set; }
     }
 
     public class PropertyModel
