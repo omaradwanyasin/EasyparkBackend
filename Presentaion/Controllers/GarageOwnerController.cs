@@ -2,6 +2,7 @@
 using Easypark_Backend.Data.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using static Easypark_Backend.Presentaion.Controllers.UserController;
 
 namespace Easypark_Backend.Presentation.Controllers
 {
@@ -13,6 +14,21 @@ namespace Easypark_Backend.Presentation.Controllers
         public GarageOwnerController(UserLoggerRepo services)
         {
             _services = services;
+        }
+        [HttpPost]
+        [Route("/GarageOwnerSignin")]
+
+        public async Task<ActionResult<GarageOwnerModels>> SignIngo([FromBody] SignRequest signInRequest)
+        {
+            // Call the repository method to sign in the user
+            var user = await _services.SignInGarageOwner(signInRequest.Email, signInRequest.Password);
+
+            if (user == null)
+            {
+                return NotFound("Invalid email or password");
+            }
+
+            return Ok(user);
         }
 
         [HttpPost]
