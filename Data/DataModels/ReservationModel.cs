@@ -1,39 +1,31 @@
 ﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 public class ReservationModel
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
+
+    [BsonElement("name")]
     public string Name { get; set; }
+
+    [BsonElement("user_id")]
     public string UserId { get; set; }
+
+    [BsonElement("garage_id")]
     public string GarageId { get; set; }
+
+    [BsonElement("reservation_date")]
     public DateTime ReservationDate { get; set; }
-    public string Status { get; set; }
-    public string Comments { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 
-    // Additional properties
-    public string VehicleType { get; set; }
+    [BsonElement("is_confirmed")]
     public bool IsConfirmed { get; set; }
-    public DateTime? ConfirmedAt { get; set; }
-
-    // Navigation properties
-    public User User { get; set; }
-    public Garage Garage { get; set; }
-}
-
-public class User
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
+    [BsonElement("email")]
     public string Email { get; set; }
-    public string PhoneNumber { get; set; }
+    [BsonElement("phoneNumber")]
+    public string phone { get; set; }
 }
 
-public class Garage
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Address { get; set; }
-    public int Capacity { get; set; }
-}
+

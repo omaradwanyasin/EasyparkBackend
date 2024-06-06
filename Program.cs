@@ -24,6 +24,7 @@ builder.Services.AddSingleton<GarageServices>();
 builder.Services.AddSingleton<UserLoggerRepo>();
 builder.Services.AddSingleton<NotificationsRepo>();
 builder.Services.AddSingleton<NotificationHub>();
+builder.Services.AddSingleton<ReservationRepo>();
 //builder.Services.AddSingleton(JwtOptions);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => {
