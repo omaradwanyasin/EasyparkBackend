@@ -1,27 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+﻿using Easypark_Backend.Data.Repository;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ReservationController : ControllerBase
 {
-    private readonly IHubContext<NotificationHub> _notificationHubContext;
+    private readonly ReservationRepo _repo;
 
-    public ReservationController(IHubContext<NotificationHub> notificationHubContext)
+    public ReservationController(ReservationRepo repo)
     {
-        _notificationHubContext = notificationHubContext;
+        _repo = repo;
     }
 
-    [HttpPost("update")]
-    public async Task<IActionResult> UpdateReservation([FromBody] ReservationModel update)
+    [HttpGet("reservation")]
+    public async Task<IActionResult> GetReservations()
     {
-        // Perform update logic...
+        var result = await _repo.getReservations();
+        return Ok(result);
+    }
 
-        // Send notification
-        var message = "Your reservation has been updated.";
-        await _notificationHubContext.Clients.All.SendAsync("ReceiveNotification", message);
+    [HttpPost("AddReservation")]
+    public async Task<IActionResult> AddReservation([FromBody] ReservationModel ob)
+    {
+        if (ob == null)
+        {
+            return BadRequest("Reservation data is null");
+        }
 
-        return Ok();
+        var result = await _repo.addreservation(ob);
+        return Ok(result);
     }
 }
