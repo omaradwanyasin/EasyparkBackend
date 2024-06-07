@@ -1,6 +1,7 @@
 ﻿using Easypark_Backend.Data.DataModels;
 using Easypark_Backend.Data.MongoDB;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Threading.Tasks;
@@ -15,11 +16,16 @@ namespace Easypark_Backend.Data.Repository
         {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
-            _collection = mongoDb.GetCollection<GarageModel>("Garages");
+            _collection = mongoDb.GetCollection<GarageModel>("Garage");
         }
 
-        public async Task UpdateGarageStatusAsync(string garageId, int status)
-        {
+        public async Task UpdateGarageStatusAsync(string garageId, int status) 
+        { 
+           
+            if (!ObjectId.TryParse(garageId, out var objectId))
+            {
+                throw new ArgumentException("Invalid garageeee ID format.", nameof(garageId));
+            }
             var filter = Builders<GarageModel>.Filter.Eq(g => g.Id, garageId);
             var update = Builders<GarageModel>.Update.Set(g => g.Status, status);
             var result = await _collection.UpdateOneAsync(filter, update);
@@ -38,6 +44,16 @@ namespace Easypark_Backend.Data.Repository
             }
 
             await _collection.InsertOneAsync(garage);
+        }
+        public async Task<GarageModel> GetGarageByIdAsync(string garageId)
+        {
+            if (!ObjectId.TryParse(garageId, out var objectId))
+            {
+                throw new ArgumentException("Invalid garage ID format.", nameof(garageId));
+            }
+
+            var filter = Builders<GarageModel>.Filter.Eq(g => g.Id, garageId);
+            return await _collection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

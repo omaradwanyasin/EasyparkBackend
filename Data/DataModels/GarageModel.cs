@@ -16,9 +16,6 @@ namespace Easypark_Backend.Data.DataModels
         [BsonElement("geometry")]
         public List<double>? Geometry { get; set; }
 
-        [BsonElement("properties")]
-        public PropertyModel? Properties { get; set; }
-
         [BsonElement("name")]
         public string Name { get; set; }
 
@@ -49,16 +46,9 @@ namespace Easypark_Backend.Data.DataModels
         [BsonElement("supportsHeavyTrucks")]
         public bool SupportsHeavyTrucks { get; set; }
 
-        [BsonElement("garageid")]
-        public string? GarageId { get; set; }
+        [BsonElement("garageOwnerId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId? garageOwnerId { get; set; }
     }
 
-    public class PropertyModel
-    {
-        [BsonElement("prop0")]
-        public string Prop0 { get; set; }
-
-        [BsonElement("parkid")]
-        public int ParkId { get; set; }
-    }
 }

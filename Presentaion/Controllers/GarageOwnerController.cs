@@ -45,6 +45,7 @@ namespace Easypark_Backend.Presentation.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user.Email),
                     new Claim(ClaimTypes.Name, user.Name ?? string.Empty),
                     new Claim("UserId", user.Id.ToString())
+
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -53,7 +54,7 @@ namespace Easypark_Backend.Presentation.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(new { Token = tokenString });
+            return Ok(new { Token = tokenString});
 
             
         }
