@@ -10,7 +10,7 @@ namespace Easypark_Backend.Services
         public GarageServices(IOptions<EasyParkDBSetting> setting) {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
-            _GarageCollection = mongoDb.GetCollection<GarageModel>("Garages");
+            _GarageCollection = mongoDb.GetCollection<GarageModel>("Garage");
         }
         public async Task<List<GarageModel>> getAsyncAllGarages()
         {
