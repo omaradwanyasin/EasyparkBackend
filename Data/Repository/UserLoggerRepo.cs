@@ -2,6 +2,11 @@
 using Easypark_Backend.Data.MongoDB;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Easypark_Backend.Data.Repository
 {
@@ -9,60 +14,103 @@ namespace Easypark_Backend.Data.Repository
     {
         private readonly IMongoCollection<UserModels> _UserCollection;
         private readonly IMongoCollection<GarageOwnerModels> _garageCollection;
-        public UserLoggerRepo(IOptions<EasyParkDBSetting> setting)
+        private readonly ILogger<UserLoggerRepo> _logger;
+
+        public UserLoggerRepo(IOptions<EasyParkDBSetting> setting, ILogger<UserLoggerRepo> logger)
         {
             var mongoClient = new MongoClient(setting.Value.ConnectionString);
             var mongoDb = mongoClient.GetDatabase(setting.Value.DatabaseName);
             _UserCollection = mongoDb.GetCollection<UserModels>("User");
             _garageCollection = mongoDb.GetCollection<GarageOwnerModels>("GarageOwner");
+            _logger = logger;
         }
+
         public async Task<UserModels> SignIn(string email, string password)
         {
-            var filter = Builders<UserModels>.Filter.Eq(u => u.Email, email) &
-                         Builders<UserModels>.Filter.Eq(u => u.Password, password);
-            var user = await _UserCollection.Find(filter).FirstOrDefaultAsync();
+            try
+            {
+                var hashedPassword = HashPassword(password);
+                var filter = Builders<UserModels>.Filter.Eq(u => u.Email, email) &
+                             Builders<UserModels>.Filter.Eq(u => u.Password, hashedPassword);
+                var user = await _UserCollection.Find(filter).FirstOrDefaultAsync();
 
-            return user;
+                if (user == null)
+                {
+                    _logger.LogWarning($"Failed login attempt for email: {email}");
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during user sign-in.");
+                throw;
+            }
         }
 
         public async Task<UserModels> SignUp(UserModels newUser)
         {
             try
             {
+                newUser.Password = HashPassword(newUser.Password);
                 await _UserCollection.InsertOneAsync(newUser);
+                _logger.LogInformation($"User registered successfully: {newUser.Email}");
                 return newUser;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error occurred during user registration: {ex}");
+                _logger.LogError(ex, "Error occurred during user registration.");
                 throw;
             }
         }
 
         public async Task<GarageOwnerModels> SignInGarageOwner(string email, string password)
         {
-            var filter = Builders<GarageOwnerModels>.Filter.Eq(u => u.Email, email) &
-                         Builders<GarageOwnerModels>.Filter.Eq(u => u.Password, password);
-            var user = await _garageCollection.Find(filter).FirstOrDefaultAsync();
+            try
+            {
+                var hashedPassword = HashPassword(password);
+                var filter = Builders<GarageOwnerModels>.Filter.Eq(u => u.Email, email) &
+                             Builders<GarageOwnerModels>.Filter.Eq(u => u.Password, hashedPassword);
+                var user = await _garageCollection.Find(filter).FirstOrDefaultAsync();
 
-            return user;
+                if (user == null)
+                {
+                    _logger.LogWarning($"Failed login attempt for garage owner email: {email}");
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during garage owner sign-in.");
+                throw;
+            }
         }
-        ///here the sign up for the garage owner;
 
         public async Task<GarageOwnerModels> GarageOwnerSignUp(GarageOwnerModels newUser)
         {
             try
             {
+                newUser.Password = HashPassword(newUser.Password);
                 await _garageCollection.InsertOneAsync(newUser);
+                _logger.LogInformation($"Garage owner registered successfully: {newUser.Email}");
                 return newUser;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error occurred during user registration: {ex}");
+                _logger.LogError(ex, "Error occurred during garage owner registration.");
                 throw;
             }
         }
 
-
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
+        }
     }
 }
