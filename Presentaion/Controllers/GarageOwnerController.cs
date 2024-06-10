@@ -15,11 +15,13 @@ namespace Easypark_Backend.Presentation.Controllers
     {
         private readonly UserLoggerRepo _services;
         private readonly JwtOptions _jwtOptions;
+        private readonly GarageRepo _garagerepo;
 
-        public GarageOwnerController(UserLoggerRepo services, JwtOptions jwtOptions)
+        public GarageOwnerController(UserLoggerRepo services, JwtOptions jwtOptions, GarageRepo garagerepo)
         {
             _services = services;
             _jwtOptions = jwtOptions;
+            _garagerepo = garagerepo;
         }
         [HttpPost]
         [Route("/GarageOwnerSignin")]
@@ -74,6 +76,13 @@ namespace Easypark_Backend.Presentation.Controllers
 
             var createdUser = await _services.GarageOwnerSignUp(newUser);
             return CreatedAtAction(nameof(SignUpGO), new { id = createdUser.Id }, createdUser);
+        }
+        [HttpGet]
+        [Route("/GarageOwnerGarageData")]
+        public async Task<ActionResult<GarageModel>> GetGarageData(string GarageOwnerId)
+        {
+            var result = await _garagerepo.getData(GarageOwnerId);
+            return result;
         }
 
         public class SignRequestGO
