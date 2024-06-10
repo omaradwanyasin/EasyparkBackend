@@ -20,10 +20,6 @@ namespace Easypark_Backend.Data.DataModels
 
         [BsonElement("Password")]
         public string Password { get; set; }
-
-        [BsonElement("Geometry")]
-        public double[] Geometry { get; set; }
-
         [BsonElement("Name")]
         public string Name { get; set; }
     }

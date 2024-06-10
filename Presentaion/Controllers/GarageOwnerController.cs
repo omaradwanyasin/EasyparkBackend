@@ -67,7 +67,6 @@ namespace Easypark_Backend.Presentation.Controllers
             {
                 Name = signUpRequest.Name,
                 Email = signUpRequest.Email,
-                Geometry = signUpRequest.Geometry,
                 Password = signUpRequest.Password,
                 PhoneNumber = null,
                 
@@ -83,7 +82,6 @@ namespace Easypark_Backend.Presentation.Controllers
             public string Name { get; set; }
             public string Email { get; set; }
             public string Password { get; set; }
-            public double[] Geometry { get; set; }
             public int? PhoneNumber { get; set; }
         }
     }
