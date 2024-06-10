@@ -81,5 +81,11 @@ namespace Easypark_Backend.Data.Repository
 
             return garage;
         }
+        public async Task<GarageModel> getData(string garageOwnerID)
+        {
+            var filter = Builders<GarageModel>.Filter.Eq(g => g.garageOwnerId, garageOwnerID);
+            var garage = await _collection.Find(filter).FirstOrDefaultAsync();
+            return garage;
+        }
     }
 }
