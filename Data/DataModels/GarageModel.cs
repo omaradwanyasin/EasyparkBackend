@@ -47,8 +47,8 @@ namespace Easypark_Backend.Data.DataModels
         public bool SupportsHeavyTrucks { get; set; }
 
         [BsonElement("garageOwnerId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId? garageOwnerId { get; set; }
+        
+        public string garageOwnerId { get; set; }
     }
 
 }

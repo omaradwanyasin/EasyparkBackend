@@ -40,7 +40,7 @@ public class GarageController : ControllerBase
             }
 
             await _garageRepo.InsertGarageAsync(garage);
-            return Ok(garage.garageOwnerId);
+            return Ok(garage);
         }
         catch (Exception ex)
         {
