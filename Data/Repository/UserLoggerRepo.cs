@@ -52,6 +52,14 @@ namespace Easypark_Backend.Data.Repository
         {
             try
             {
+                var existingUser = await _UserCollection.Find(Builders<UserModels>.Filter.Eq(u => u.Email, newUser.Email)).FirstOrDefaultAsync();
+
+                if (existingUser != null)
+                {
+                    _logger.LogWarning($"Attempted to register with existing email: {newUser.Email}");
+                    throw new InvalidOperationException("Email already in use.");
+                }
+
                 newUser.Password = HashPassword(newUser.Password);
                 await _UserCollection.InsertOneAsync(newUser);
                 _logger.LogInformation($"User registered successfully: {newUser.Email}");
@@ -91,6 +99,14 @@ namespace Easypark_Backend.Data.Repository
         {
             try
             {
+                var existingUser = await _garageCollection.Find(Builders<GarageOwnerModels>.Filter.Eq(u => u.Email, newUser.Email)).FirstOrDefaultAsync();
+
+                if (existingUser != null)
+                {
+                    _logger.LogWarning($"Attempted to register with existing garage owner email: {newUser.Email}");
+                    throw new InvalidOperationException("Email already in use.");
+                }
+
                 newUser.Password = HashPassword(newUser.Password);
                 await _garageCollection.InsertOneAsync(newUser);
                 _logger.LogInformation($"Garage owner registered successfully: {newUser.Email}");
