@@ -14,9 +14,9 @@ public class ReservationController : ControllerBase
     }
 
     [HttpGet("reservation")]
-    public async Task<IActionResult> GetReservations()
+    public async Task<IActionResult> GetReservations(string garageId )
     {
-        var result = await _repo.getReservations();
+        var result = await _repo.GetReservationByIdAsync(garageId);
         return Ok(result);
     }
 

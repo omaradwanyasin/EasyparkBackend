@@ -36,9 +36,10 @@ namespace Easypark_Backend.Data.Repository
             return new CreatedAtActionResult("GetReservationById", "Reservation", new { id = ob.Id }, ob);
         }
 
-        public async Task<ReservationModel> GetReservationByIdAsync(string id)
+        public async Task<List<ReservationModel>> GetReservationByIdAsync(string garageId)
         {
-            return await _collection.Find(r => r.Id == id).FirstOrDefaultAsync();
+            return await _collection.Find(r => r.GarageId == garageId).ToListAsync();
         }
+
     }
 }
