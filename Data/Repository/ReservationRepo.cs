@@ -41,5 +41,14 @@ namespace Easypark_Backend.Data.Repository
             return await _collection.Find(r => r.GarageId == garageId).ToListAsync();
         }
 
+
+
+        public async Task<bool> deleteRes(string reservationid)
+        {
+            var deleteResult = await _collection.DeleteOneAsync(r => r.Id == reservationid);
+
+            return deleteResult.DeletedCount > 0;
+        }
+
     }
 }
