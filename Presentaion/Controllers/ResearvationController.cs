@@ -31,4 +31,10 @@ public class ReservationController : ControllerBase
         var result = await _repo.addreservation(ob);
         return Ok(result);
     }
+    [HttpDelete("deleteReservation")]
+    public async Task<IActionResult> DeleteReservation( string reservationid)
+    {
+        var result = await _repo.deleteRes(reservationid);
+        return Ok(result);
+    }
 }
