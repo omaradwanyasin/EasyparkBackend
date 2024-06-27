@@ -9,7 +9,7 @@ namespace Easypark_Backend.Data.DataModels
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("UserId")] 
+        [BsonElement("UserId")] bool 
         public int UserId { get; set; }
 
         [BsonElement("Name")]
