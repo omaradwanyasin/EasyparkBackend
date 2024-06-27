@@ -37,4 +37,7 @@ public class ReservationController : ControllerBase
         var result = await _repo.deleteRes(reservationid);
         return Ok(result);
     }
+    
+    
+
 }
