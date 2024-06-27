@@ -50,6 +50,7 @@ namespace Easypark_Backend.Data.DataModels
         
         public string garageOwnerId { get; set; }
         [BsonElement("price")]
+        //
         public int price { get; set; }
     }
 
